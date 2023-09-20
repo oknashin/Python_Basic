@@ -39,3 +39,10 @@ print(msg[3:])  # 끝 인덱스 생략 -> 자동 -1 입력
 # 역방향 인덱스 ->
 print(msg[18:])
 print(msg[-4:])
+
+# 4.문자열 함수
+str = "Hello World"
+
+# 4-1.len() : 문자열 길이 계산
+print(len(str))
+
