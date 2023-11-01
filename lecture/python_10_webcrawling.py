@@ -91,3 +91,7 @@ content = ""
 for p in content_list:
     content += p.get_text()
 print(f"본문: {content}")
+
+# 숙제: 날짜 알아오기
+reg_date = doc.select("")
+print(f"날짜: {reg_date}")
