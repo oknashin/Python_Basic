@@ -1,76 +1,80 @@
-###############################################################
-#  "스타벅스" 카페 키오스크 프로그램
-#    - 일자: 2023년 10월 13일
-#    - 작성자: oknashin
-#    - 내용: 카페 음료를 주문 및 판매하는 콘솔 프로그램
+# SELENIUM
 
-# 조건
-#  1.사용자는 최대 음료 1개, 베이커리 1개, 굿즈 1개 구매가능!
+# pip install selenium
+# pip install webdriver_manager
 
-from service_kiosk import user_choice
+# ** Selenium을 사용하는 이유?
+#  - Requests는 현재 URL의 정적 페이지 소스코드만 수집 가능
+#    → "더보기" 버튼 클릭과 같이 동적인 동작 불가!
+#  - Selenium은 전용 브라우저를 사용해서 동작
+#    → 따라서 chrome 드라이버와 같인 브라우저 설정 반드시 필요!
+#    ※ Selenium은 처음에 웹 브라우저 테스트 용으로 개발
 
-# 메뉴와 가격표
-#  - Dict Type -> 데이터베이스
-main_name = {1: "음료(Drink)", 2: "빵 (Bakery)", 3: "굿즈(Goods)"}
+# ** Selenium 사용 방법 2가지
+#  1.직접 다운로드
+#   - URL: https://sites.google.com/chromium.org/driver/
+#  2.실시간(코드) 다운로드
 
+import math
+import re
+import time
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
-drink_name = {1:"아메리카노", 2:"돌체콜드브루", 3:"딸기라떼", 4:"자몽에이드"}
-bakery_name = {1:"카스테라", 2:"크로플", 3:"바움쿠헨"}
-goods_name = {1:"텀블러", 2:"비치타월", 3:"무드등"}
+# 1.Selenium 전용 웹 브라우저 구동
+options = Options()
+options.add_experimental_option("detach", True)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                          options=options)
+# 2.URL 접속
+url = "https://movie.daum.net/moviedb/grade?movieId=165591"
+driver.get(url)
+time.sleep(2)
 
-drink_price = {1: 3000, 2: 4500, 3: 6000, 4: 5000}
-bakery_price = {1: 4500, 2: 5000, 3: 7000}
-goods_price = {1: 18000, 2: 7000, 3: 17000}
+# 3.페이지 전체 코드 가져오기
+doc_html = driver.page_source
 
-# 고객 주문 기록 저장
-menu_save = []   # 고객 주문 메뉴 기록
-price_save = []  # 고객 주문 금액 기록
+# 4.Selenim → BeautifulSoup
+doc = BeautifulSoup(doc_html, "html.parser")
 
-# 1. 메인 메뉴 저장
-print("■" * 20)
-print("■■ == 스타벅스 ==")
-print("■■ == ver 1.2 ")
-print("■■ 메인 메뉴")
-for i in range(len(main_name)):
-    print(f"■□  {i+1}.{main_name[i+1]}")
-print("■" * 20)
+# 5.영화 제목 수집
+movie_title = doc.select("span.txt_tit")[0].get_text()
+print("="* 100)
+print(f"= 영화 제목: {movie_title}")
+print("="* 100)
 
-# 2.메인 메뉴 선택
-choice = user_choice(len(main_name), "main")
+# 6.전체 리뷰 출력("평점 더보기" 클릭)
+#  - 다음 영화 최초 페이지 → 10개
+#  - "평점 더보기" 클릭 → 30개
+#  ? "평점 더보기" 몇 번 클릭? → 전체 리뷰 출력
 
-# 3.세부 메뉴 출력
-if choice == 1:    # 음료
-    print("▲▲ 음료(Drink) 메뉴")
-    for i in range(len(drink_name)):
-        print(f"▲△  {i+1}.{drink_name[i+1]}({drink_price[i+1]})")
-    # 4.세부 메뉴 선택
-    sub = user_choice(len(drink_name), "sub")
-    # 5.주문 저장
-    menu_save.append(drink_name[sub])
-    price_save.append(drink_price[sub])
-elif choice == 2:  # 빵
-    print("▲▲ 빵(Bakery) 메뉴")
-    for i in range(len(bakery_name)):
-        print(f"▲△  {i+1}.{bakery_name[i+1]}({bakery_price[i+1]})")
-    # 4.세부 메뉴 선택
-    sub = user_choice(len(bakery_name), "sub")
-    # 5.주문 저장
-    menu_save.append(bakery_name[sub])
-    price_save.append(bakery_price[sub])
-elif choice == 3:  # 굿즈
-    print("▲▲ 굿즈(Goods) 메뉴")
-    for i in range(len(goods_name)):
-        print(f"▲△  {i+1}.{goods_name[i+1]}({goods_price[i+1]})")
-    # 4.세부 메뉴 선택
-    sub = user_choice(len(goods_name), "sub")
-    # 5.주문 저장
-    menu_save.append(goods_name[sub])
-    price_save.append(goods_price[sub])
-elif choice == 99:
-    print("MSG: 스타벅스 키오스크를 종료합니다.")
-    exit()
+# ex) 전체 리뷰: 187개
+# 수식: 올림((187 - 10) / 30)
 
-for menu in menu_save:
-    print(menu)
-for price in price_save:
-    print(price)
+# 6-1. 전체 리뷰 수집
+total_review_cnt = doc.select("span.txt_netizen")[0].get_text()
+
+# 6-2. 전체 리뷰에서 숫자만 추출
+#  - 문자열 슬라이싱
+#  예) (187명)
+# print(total_review_cnt[1:-2])
+#  - 정규식 → 숫자만 추출
+num_review = int(re.sub(r"[^~0-9]", "", total_review_cnt))
+
+# 6-3."평점 더보기" 클릭 횟수 계산(모든 리뷰 출력)
+click_cnt = math.ceil((num_review - 10) / 30)
+
+# 7.Selenium을 통해서 "평점 더보기" 클릭
+for i in range(click_cnt):
+    # "평점 더보기" 클릭
+    driver.find_element(By.CLASS_NAME, "link_fold").click()
+    time.sleep(1)
+
+# 8.전체 소스코드 가져오기
+doc_html = driver.page_source
+doc = BeautifulSoup(doc_html, "html.parser")
+review_list = doc.select("")
