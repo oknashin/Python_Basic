@@ -17,6 +17,7 @@ import math
 import re
 import time
 from bs4 import BeautifulSoup
+from db.movie_dao import add_review
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -106,3 +107,13 @@ for item in review_list:
         # 예) 2023-11-16 18:29:23.232500 -> 2023. 11. 16. 15:33
         review_date = review_date.strftime("%Y. %m. %d. %H:%M")
     print(f"  - 날짜: {review_date }")
+    # MariaDB에 저장
+    #  1)
+    data = {
+        "title": movie_title,
+        "review": review_content,
+        "score": review_score,
+        "writer": review_writer,
+        "reg_date": review_date
+    }
+    add_review(data)
