@@ -1,0 +1,425 @@
+// 재귀함수 호출
+#include <stdio.h>
+
+void print_A(int n) {
+    if (n == 1) {
+        printf("A");
+    } else {
+        for (int i = 0; i < n; i++) {
+            printf("A");
+        }
+        printf("\n");
+        print_A(n - 1); // 하나씩 줄이기
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    print_A(n);
+
+    return 0;
+}
+
+//올해 남아있는 일수
+#include <stdio.h>
+
+int main() {
+    int m, d;
+    scanf("%d월 %d일", &m, &d);
+
+    int daysInMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    int daysFromInput = d;
+
+    for (int i = 1; i < m; i++) {
+        daysFromInput += daysInMonth[i];  // 해당 월의 일수 더하기
+    }
+
+    int daysLeft = 365 - daysFromInput + 1; // 남은 일수
+
+    printf("%d일 남음", daysLeft);
+
+    return 0;
+}
+
+//소문자와 대문자의 등장 횟수
+#include <stdio.h>
+
+int main() {
+    char ch;
+    int uppercaseCount = 0;
+    int lowercaseCount = 0;
+
+    while ((ch = getchar()) != '\n') {
+        if (ch >= 'A' && ch <= 'Z') {  // 대문자면 +1
+            uppercaseCount++;
+        } else if (ch >= 'a' && ch <= 'z') {  // 소문자면 +1
+            lowercaseCount++;
+        }
+    }
+
+    printf("대문자");
+    for (int i = 0; i < uppercaseCount; i++) {  
+        printf("*");
+    }
+
+    printf("\n소문자");
+    for (int i = 0; i < lowercaseCount; i++) {
+        printf("*");
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+//문자를 읽어들인 시점에서 프로그램 중단, 앞서 입력한 모든 문자 출력
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+  char lines[10][128];  //배열 정의
+  int lineCount = 0;
+
+  while (1) {
+    char line[128];
+    scanf("%s", line);
+
+    if (strcmp(line, "$END$") == 0) {  //입력받은 문자열이 "$END$"인 경우, 무한 루프를 종료
+      break;
+    }
+
+    strcpy(lines[lineCount], line);  //입력받은 문자열을 2차원 배열 lines의 lineCount번째 행에 복사
+      lineCount++;  //문자 수
+  }
+
+  for (int i = 0; i < lineCount; i++) {
+    printf("%s\n", lines[i]);  // 출력
+  }
+
+  return 0;
+}
+
+// 문자열 그대로 거꾸로 출력
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char input[128];
+    gets(input);  //문자열 입력
+
+    printf("%s", input);
+
+    int len = strlen(input);  //문자열 길이를 계산하여 저장
+    for (int i = len - 1; i >= 0; i--) {  //문자열 역순 출
+        putchar(input[i]);
+    }
+
+    return 0;
+}
+
+// 문자열 내의 공백 삭제
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+  char x[128];
+  gets(x);
+
+  int a = strlen(x); //문자열 길이 계산
+  char b[128];
+  int c = 0;
+
+  for (int i = 0; i < a; i++) {  //공백을 제외하고 배열에 저장
+    if (x[i] != ' ') {
+      b[c] = x[i];
+      c++;
+    }
+  }
+  b[c] = '\0'; 
+
+  printf("%s", b);  //출력
+
+  return 0;
+}
+
+// 포인터를 사용한 입력 성적에 따른 학점 부여
+#include <stdio.h>
+
+char grade(int *score) {  //포인터로 학점 계
+  if (90 <= *score && *score <= 100)
+    return 'A';
+  else if (80 <= *score && *score < 90)
+    return 'B';
+  else if (70 <= *score && *score < 80)
+    return 'C';
+  else if (60 <= *score && *score < 70)
+    return 'D';
+  else
+    return 'F';
+}
+
+int main(void) {
+  int score;
+
+  scanf("%d", &score);
+
+  char g = grade(&score); //학점을 계산하여 저장
+
+  printf("%c\n", g);
+
+  return 0;
+}
+
+// 배열 데이터를 내림차순으로 정렬
+#include <stdio.h>
+
+void swap(int *px, int *py) { //값을 교환하는 함수
+  int temp = *px;
+  *px = *py;
+  *py = temp;
+}
+
+void sort(int *v, int n) {  //내림차순으로 정렬
+  for (int i = 0; i < n - 1; i++) {
+    for (int j = 0; j < n - 1 - i; j++) { 
+      if (*(v + j) < *(v + j + 1)) {
+        swap(v + j, v + j + 1);
+      }
+    }
+  }
+}
+
+int main() {
+  int arr[10];
+
+
+  for (int i = 0; i < 10; i++) {
+    scanf("%d", &arr[i]);
+  }
+
+  sort(arr, 10);  // 배열 저장
+
+  for (int i = 0; i < 10; i++) {
+    printf("%d ", arr[i]); 
+  }
+  printf("\n");
+
+  return 0;
+}
+
+// 배열 특정 범위 위치의 값을 변형
+#include <stdio.h>
+#define NUM 10
+
+void ary_set(int *v, int n1, int n2, int val) {
+  int i;
+  for (i = n1 - 1; i < n2; i++) {  //배열의 인덱스 n1-1부터 n2-1까지의 범위에 해당하는 부분을 val로 설정
+    *(v + i) = val;
+  }
+}
+
+int main() {
+
+  int n1, n2, val;
+  int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+  scanf("%d %d %d", &n1, &n2, &val);
+
+  ary_set(a, n1, n2, val);
+
+  for (int i = 0; i < NUM; i++) {
+    printf("%d ", a[i]);
+  }
+   printf("\n");
+
+  return 0;
+}
+
+// 대문자는 소문자, 소문자는 대문자로 바꿔서 출력
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char x[101];
+    fgets(x, sizeof(x), stdin); //입력받고 저장
+
+    for (int i = 0; x[i] != '\0'; i++) {  //대문자면 소문자, 소문자면 대문자로 변환환
+        if (isupper(x[i])) {
+            x[i] = tolower(x[i]);
+        } else if (islower(x[i])) {
+            x[i] = toupper(x[i]);
+        }
+    }
+
+    printf("%s\n", x);
+
+    return 0;
+}
+
+// 문자열에서 짝수번째에 있는 문자 삭제 후 출력
+#include <stdio.h>
+#include <string.h>
+
+void removeEvenCharacters(char *str) { //짝수번째에 위치한 함수를 제거
+    int len = strlen(str); //문자열 길이 계산
+    int j = 0;
+
+    for (int i = 0; i < len; i += 2) {  //짝수 번째에 위치한 문자들만을 새로운 위치에 저장
+        str[j++] = str[i];
+    }
+
+    str[j] = '\0';
+}
+
+int main() {
+    char input_str[101];
+    fgets(input_str, sizeof(input_str), stdin); //입력
+
+    input_str[strcspn(input_str, "\n")] = '\0';
+
+    removeEvenCharacters(input_str); 
+
+    printf("%s\n", input_str);
+
+    return 0;
+}
+
+// 문자열, 특정 문자열을 입력받아 특정 문자열 전까지 출력
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[101];
+    char ch;
+    char *p;
+
+    scanf("%s", str); 
+
+    scanf(" %c", &ch);
+
+    p = strchr(str, ch); //입력받은 문자열 str에서 입력받은 문자 ch가 처음으로 나타나는 위치를 찾아 p에 저장
+
+    if (p == NULL)
+        printf("NO.");
+    else {
+        printf("이전문자는 %.*s%c입니다.", (int)(p - str), str, *p); //출력력
+    }
+
+    return 0;
+}
+
+// 학번, 이름, 전화번호로 된 구조체를 정의하고 입력받아 값 출력력
+#include <stdio.h>
+#include <string.h>
+
+struct Student {
+  char a[20];
+  char b[50];
+  char c[20];
+};
+
+void phone_number(char m[], int n);
+
+int main() {
+  struct Student x;
+
+  scanf("%s %s %s", x.a, x.b, x.c);
+
+  printf("%s\n%s\n", x.a, x.b);
+  phone_number(x.c, strlen(x.c)); //입력받은 전화번호를 phone_number 함수를 사용하여 특정한 형식으로 출력
+
+  return 0;
+}
+
+void phone_number(char m[], int n) {
+   printf("%c%c%c-%c%c%c%c-%c%c%c%c\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11]);
+}
+
+// (x,y)좌표를 입력하고 어느 사분면인지 출력
+#include <stdio.h>
+
+struct Point { //구조체 생성
+    int x;
+    int y;
+};
+
+int quadrant(struct Point p);
+
+int main() {
+  struct Point point;
+
+  scanf("%d %d", &point.x, &point.y);
+
+  printf("사분면=%d\n", quadrant(point));
+
+  return 0;
+}
+
+int quadrant(struct Point p) { //어떤 사분면인지 확인
+  if (p.x > 0 && p.y > 0) {
+    return 1;
+} else if (p.x < 0 && p.y > 0) {
+    return 2;
+} else if (p.x < 0 && p.y < 0) {
+    return 3;
+} else if (p.x > 0 && p.y < 0) {
+    return 4;
+  } else {
+    return 0;
+  }
+}
+
+// 상품판매에 대한 구조체 배열
+#include <stdio.h>
+#include <string.h>
+
+struct Product {
+  char productName[50];
+  int x;
+  int y;
+};
+
+void search_brand(struct Product a[], int n, char searchName[]);
+void print_arr(struct Product arr[], int arr_len);
+
+int main() {
+  struct Product products[5];
+
+  for (int i = 0; i < 5; i++) {
+    scanf("%s %d %d", products[i].productName, &products[i].x, &products[i].y);
+  }
+
+  int choice;
+  scanf("%d", &choice);
+
+  if (choice == 1) {
+    char searchName[50];
+    scanf("%s", searchName);
+    search_brand(products, 5, searchName);
+  } else if (choice == 2) {
+    print_arr(products, 5);
+  }
+
+  return 0;
+}
+
+void search_brand(struct Product a[], int n, char searchName[]) {
+  for (int i = 0; i < n; i++) {
+    if (strcmp(a[i].productName, searchName) == 0) {
+      printf("%s %d %d\n", a[i].productName, a[i].x, a[i].y);
+      break;
+    }
+  }
+}
+
+void print_arr(struct Product arr[], int arr_len) {
+  int totalSales = 0;
+  for (int i = 0; i < arr_len; i++) {
+    printf("%s %d %d\n", arr[i].productName, arr[i].x, arr[i].y);
+    totalSales += arr[i].y;
+  }
+  printf("매출액 총계:%d\n", totalSales);
+}
